@@ -15,10 +15,10 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "file_series"
-  gem.homepage = "http://github.com/alexdean/file_series"
+  gem.homepage = "http://github.com/tedconf/file_series"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = "Write to a series of time-based files."
+  gem.description = "Automatically start writing to a new file every X seconds without any locking or file moving/renaming."
   gem.email = "alex@crackpot.org"
   gem.authors = ["Alex Dean"]
   # dependencies defined in Gemfile
