@@ -25,12 +25,12 @@ class FileSeries
 	attr_accessor :separator
 	attr_accessor :dir
 	attr_accessor :file
-	attr_accessor :handle_ts
+	attr_accessor :current_ts
 
 	def initialize(options={})
 		@dir = options[:dir] || DEFAULT_DIR
 		@file = nil
-		@handle_ts = nil
+		@current_ts = nil
 		@filename_prefix = options[:prefix] || DEFAULT_PREFIX
 		@rotate_freq = options[:rotate_every] || DEFAULT_FREQ #seconds
 		@binary_writes = options[:binary]
@@ -47,7 +47,7 @@ class FileSeries
 		ts = this_period
 
 		# if we're in a new time period, start writing to new file.
-		if (! file) || (ts != handle_ts)
+		if (! file) || (ts != current_ts)
 			rotate(ts)
 		end
 
@@ -66,7 +66,7 @@ class FileSeries
 		ts ||= this_period
 		@file.close if @file
 		@file = File.open(filename(ts), "a#{'b' if @binary_writes}")
-		@handle_ts = ts
+		@current_ts = ts
 	end
 
 	# return a string filename for the logfile for the supplied timestamp.
