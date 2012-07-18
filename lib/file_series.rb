@@ -1,0 +1,91 @@
+# Writes to this logger will be directed to new files at a configurable frequency.
+#
+#  => logger = FileSeries.new('.', :prefix=>'test', :rotate_every=>60)
+#  => logger.write("some message\n")
+#
+# This will create a file like 'test-1342477810-60.log'. A new file will be
+# created every 60 seconds. You don't need to do anything except keep calling
+# logger.write().
+#
+# Files are created as needed, so you won't end up with lots of 0-length files.
+# If you do see a recent 0-length file, it's probably due to your OS buffering
+# writes to the file.
+#
+# Other configuration options:
+#   :binary - boolean. If true, log files are opened in binary mode. (Useful for Marshal.dump)
+#   :separator - string. Appended to each write. Defaults to \n. Use something else in :binary mode.
+#
+
+class FileSeries
+	DEFAULT_DIR = '.'
+	DEFAULT_PREFIX = 'log'
+	DEFAULT_FREQ = 60
+	DEFAULT_SEPARATOR = "\n"
+
+	attr_accessor :separator
+	attr_accessor :dir
+	attr_accessor :file
+	attr_accessor :handle_ts
+
+	def initialize(options={})
+		@dir = options[:dir] || DEFAULT_DIR
+		@file = nil
+		@handle_ts = nil
+		@filename_prefix = options[:prefix] || DEFAULT_PREFIX
+		@rotate_freq = options[:rotate_every] || DEFAULT_FREQ #seconds
+		@binary_writes = options[:binary]
+		@separator = options[:separator] || DEFAULT_SEPARATOR
+	end
+
+	# write something to the current log file.
+	def write(message)
+		log_file.write(message + @separator)
+	end
+
+	# return a File object for the current log file.
+	def log_file
+		ts = this_period
+
+		# if we're in a new time period, start writing to new file.
+		if (! file) || (ts != handle_ts)
+			rotate(ts)
+		end
+
+		file
+	end
+
+	# compute the current time period.
+	def this_period
+		t = Time.now.to_i
+		t - (t % @rotate_freq)
+	end
+
+	# close current file handle and open a new one for a new logging period.
+	# ts defaults to the current time period.
+	def rotate(ts=nil)
+		ts ||= this_period
+		@file.close if @file
+		@file = File.open(filename(ts), "a#{'b' if @binary_writes}")
+		@handle_ts = ts
+	end
+
+	# return a string filename for the logfile for the supplied timestamp.
+	# defaults to current time period.
+	def filename(ts=nil)
+		ts ||= this_period
+		File.join(@dir, "#{@filename_prefix}-#{ts}-#{@rotate_freq}.log")
+	end
+
+	# get all files which match our pattern which are not current.
+	# (safe for consumption. no longer being written to.)
+	def complete_files
+		current_file = filename
+
+		Dir.glob(
+			File.join(@dir, "#{@filename_prefix}-*-#{@rotate_freq}.log")
+		).select do |name|
+			name != current_file
+		end
+	end
+
+end
