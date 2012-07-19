@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "file_series"
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alex Dean"]
-  s.date = "2012-07-18"
+  s.date = "2012-07-19"
   s.description = "Automatically start writing to a new file every X seconds without any locking or file moving/renaming."
   s.email = "alex@crackpot.org"
   s.extra_rdoc_files = [
@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
     "README.rdoc"
   ]
   s.files = [
+    ".autotest",
     ".document",
     ".rspec",
     "Gemfile",
@@ -40,12 +41,18 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_development_dependency(%q<autotest-standalone>, [">= 0"])
+      s.add_development_dependency(%q<autotest-fsevent>, [">= 0"])
+      s.add_development_dependency(%q<autotest-growl>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_development_dependency(%q<timecop>, ["= 0.3.5"])
     else
+      s.add_dependency(%q<autotest-standalone>, [">= 0"])
+      s.add_dependency(%q<autotest-fsevent>, [">= 0"])
+      s.add_dependency(%q<autotest-growl>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
@@ -53,6 +60,9 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<timecop>, ["= 0.3.5"])
     end
   else
+    s.add_dependency(%q<autotest-standalone>, [">= 0"])
+    s.add_dependency(%q<autotest-fsevent>, [">= 0"])
+    s.add_dependency(%q<autotest-growl>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 2.8.0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
