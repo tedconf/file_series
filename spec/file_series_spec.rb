@@ -38,6 +38,17 @@ describe "FileSeries" do
 
 	end
 
+	it "should support binary file writing" do
+		# TODO: need to come up with some sequence which can't be written in non-binary mode.
+		# Trying to write a Marshal'd version of
+		# https://github.com/tedconf/videometrics/blob/83ad528b013ce591ac2500d7317e0904270356f9/spec/controllers/imports_controller_spec.rb#L92
+		# in non-binary mode fails with
+		#   Failure/Error: post :record_event, :event => @event
+    #   Encoding::UndefinedConversionError:
+    #   "\x87" from ASCII-8BIT to UTF-8
+    # Writing in binary mode works fine. How to reproduce that more simply for a test?
+	end
+
 	describe "#write" do
 		it "should call log_file.write with message and separator" do
 			fs = FileSeries.new(:separator=>'...')
@@ -97,6 +108,73 @@ describe "FileSeries" do
 				fs = FileSeries.new(:dir=>'/tmp', :prefix=>'prefix', :rotate_every=>10)
 				fs.complete_files.should == (list - ['/tmp/prefix-130-10.log'])
 			end
+		end
+	end
+
+	describe "#each" do
+		it "should enumerate all lines in all files in a series" do
+			fs = FileSeries.new(:dir=>test_dir, :rotate_every=>60, :prefix=>'events')
+
+			# write 3 files with consecutive integers.
+			Timecop.freeze(100) do
+				(0..9).each do |i|
+					fs.write i
+				end
+			end
+			Timecop.freeze(160) do
+				(10..19).each do |i|
+					fs.write i
+				end
+			end
+			Timecop.freeze(220) do
+				(20..29).each do |i|
+					fs.write i
+				end
+			end
+			fs.file.flush
+
+			out = []
+			fs.each do |line|
+				out << line
+			end
+
+			out.should == (0..29).to_a.map {|i| i.to_s+"\n" }
+		end
+
+		it "should enumerate all entries in a binary file series" do
+			fs = FileSeries.new(
+				:binary=>true,
+				:separator=>'!~!~!',
+				:dir=>test_dir,
+				:prefix=>'bin',
+				:rotate_every=>60
+			)
+
+			Timecop.freeze(100) do
+				(0..9).each do |i|
+					fs.write Marshal.dump(i)
+				end
+			end
+			Timecop.freeze(160) do
+				(10..19).each do |i|
+					fs.write Marshal.dump(i)
+				end
+			end
+			Timecop.freeze(220) do
+				(20..29).each do |i|
+					fs.write Marshal.dump(i)
+				end
+			end
+			fs.file.flush
+
+			out = []
+			fs.each do |line|
+				out << Marshal.load(line)
+			end
+
+			# note that we don't get the separator, and they're Fixnum not String
+			out.should == (0..29).to_a.map {|i| i }
+
 		end
 	end
 

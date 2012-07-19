@@ -33,13 +33,13 @@ class FileSeries
 		@current_ts = nil
 		@filename_prefix = options[:prefix] || DEFAULT_PREFIX
 		@rotate_freq = options[:rotate_every] || DEFAULT_FREQ #seconds
-		@binary_writes = options[:binary]
+		@binary_mode = options[:binary]
 		@separator = options[:separator] || DEFAULT_SEPARATOR
 	end
 
 	# write something to the current log file.
 	def write(message)
-		log_file.write(message + @separator)
+		log_file.write(message.to_s + @separator)
 	end
 
 	# return a File object for the current log file.
@@ -65,7 +65,7 @@ class FileSeries
 	def rotate(ts=nil)
 		ts ||= this_period
 		@file.close if @file
-		@file = File.open(filename(ts), "a#{'b' if @binary_writes}")
+		@file = File.open(filename(ts), "a#{'b' if @binary_mode}")
 		@current_ts = ts
 	end
 
@@ -85,6 +85,15 @@ class FileSeries
 			File.join(@dir, "#{@filename_prefix}-*-#{@rotate_freq}.log")
 		).select do |name|
 			name != current_file
+		end
+	end
+
+	# enumerate over all the writes in a series, across all files.
+	def each
+		complete_files.sort.each do |file|
+			File.open(file,"r#{'b' if @binary_mode}").each_line(@separator) do |raw|
+				yield raw
+			end
 		end
 	end
 
