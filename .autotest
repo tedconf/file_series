@@ -1,0 +1,5 @@
+# less resource-intense way to watch for changed files, OSX only.
+require 'autotest/fsevent'
+
+# show failure messages via growl.
+require 'autotest/growl'
