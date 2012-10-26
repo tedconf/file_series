@@ -1,3 +1,5 @@
+require 'time'
+
 # Writes to this logger will be directed to new files at a configurable frequency.
 #
 #  => logger = FileSeries.new('.', :prefix=>'test', :rotate_every=>60)
@@ -73,7 +75,7 @@ class FileSeries
 	# defaults to current time period.
 	def filename(ts=nil)
 		ts ||= this_period
-		File.join(@dir, "#{@filename_prefix}-#{ts}-#{@rotate_freq}.log")
+		File.join(@dir, "#{@filename_prefix}-#{Time.at(ts).utc.strftime('%Y%m%d-%H%M%SZ')}-#{@rotate_freq}.log")
 	end
 
 	# get all files which match our pattern which are not current.

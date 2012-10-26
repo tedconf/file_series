@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'time'
 require 'timecop'
 
 def test_dir
@@ -19,20 +20,20 @@ describe "FileSeries" do
 
 	it "should write to a new file if we are in a new time period" do
 
-		Timecop.freeze(Time.at(100))
+		Timecop.freeze(Time.parse('1970-01-01 00:01:00Z'))
 		fs = FileSeries.new(:dir=>test_dir, :rotate_every => 10)
 		fs.write('foo')
 
-		name = File.join(test_dir,'log-100-10.log')
-		File.exist?(name).should == true
+		name = File.join(test_dir,'log-19700101-000100Z-10.log')
+		File.exist?(name).should eq true
 		fs.file.flush
-		IO.read(name).should == "foo\n"
+		IO.read(name).should eq "foo\n"
 
-		Timecop.freeze(Time.at(115))
+		Timecop.freeze(Time.parse('1970-01-01 00:01:15Z'))
 		fs.write('foo again')
 
-		name = File.join(test_dir,'log-110-10.log')
-		File.exist?(name).should == true
+		name = File.join(test_dir,'log-19700101-000110Z-10.log')
+		File.exist?(name).should eq true
 		fs.file.flush
 		IO.read(name).should == "foo again\n"
 
@@ -83,30 +84,30 @@ describe "FileSeries" do
 	describe "#filename" do
 		it "should accept a timestamp argument" do
 			fs = FileSeries.new( :dir=>'/tmp', :prefix=>'test', :rotate_every=>60)
-			fs.filename(1234).should == "/tmp/test-1234-60.log"
+			fs.filename(Time.parse('1970-01-01 00:20:34Z').to_i).should eq "/tmp/test-19700101-002034Z-60.log"
 		end
 
 		it "should use this_period when no timestamp is supplied" do
 			fs = FileSeries.new( :dir=>'/tmp', :prefix=>'test', :rotate_every=>3600)
-			fs.should_receive(:this_period) {4321}
-			fs.filename.should == "/tmp/test-4321-3600.log"
+			fs.should_receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
+			fs.filename.should == "/tmp/test-19700101-002000Z-3600.log"
 		end
 	end
 
 	describe "#complete_files" do
 		it "should find files in our series which are not in use" do
 			list = [
-				'/tmp/prefix-100-10.log',
-				'/tmp/prefix-110-10.log',
-				'/tmp/prefix-120-10.log',
-				'/tmp/prefix-130-10.log',
+				'/tmp/prefix-19700101-000200Z-60.log',
+				'/tmp/prefix-19700101-000300Z-60.log',
+				'/tmp/prefix-19700101-000400Z-60.log',
+				'/tmp/prefix-19700101-000500Z-60.log',
 			]
 
-			Dir.should_receive(:glob).with('/tmp/prefix-*-10.log') {list}
+			Dir.should_receive(:glob).with('/tmp/prefix-*-60.log') {list}
 
-			Timecop.freeze(Time.at(136)) do
-				fs = FileSeries.new(:dir=>'/tmp', :prefix=>'prefix', :rotate_every=>10)
-				fs.complete_files.should == (list - ['/tmp/prefix-130-10.log'])
+			Timecop.freeze(Time.parse('1970-01-01 00:05:05Z')) do
+				fs = FileSeries.new(:dir=>'/tmp', :prefix=>'prefix', :rotate_every=>60)
+				fs.complete_files.should == (list - ['/tmp/prefix-19700101-000500Z-60.log'])
 			end
 		end
 	end
@@ -116,17 +117,17 @@ describe "FileSeries" do
 			fs = FileSeries.new(:dir=>test_dir, :rotate_every=>60, :prefix=>'events')
 
 			# write 3 files with consecutive integers.
-			Timecop.freeze(100) do
+			Timecop.freeze(Time.parse('1970-01-01 01:00:00')) do
 				(0..9).each do |i|
 					fs.write i
 				end
 			end
-			Timecop.freeze(160) do
+			Timecop.freeze(Time.parse('1970-01-01 01:01:00')) do
 				(10..19).each do |i|
 					fs.write i
 				end
 			end
-			Timecop.freeze(220) do
+			Timecop.freeze(Time.parse('1970-01-01 01:02:00')) do
 				(20..29).each do |i|
 					fs.write i
 				end
@@ -150,17 +151,17 @@ describe "FileSeries" do
 				:rotate_every=>60
 			)
 
-			Timecop.freeze(100) do
+			Timecop.freeze(Time.parse('1970-01-01 01:00:00')) do
 				(0..9).each do |i|
 					fs.write Marshal.dump(i)
 				end
 			end
-			Timecop.freeze(160) do
+			Timecop.freeze(Time.parse('1970-01-01 01:01:00')) do
 				(10..19).each do |i|
 					fs.write Marshal.dump(i)
 				end
 			end
-			Timecop.freeze(220) do
+			Timecop.freeze(Time.parse('1970-01-01 01:02:00')) do
 				(20..29).each do |i|
 					fs.write Marshal.dump(i)
 				end
