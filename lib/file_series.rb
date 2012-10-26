@@ -19,84 +19,84 @@ require 'time'
 #
 
 class FileSeries
-	DEFAULT_DIR = '.'
-	DEFAULT_PREFIX = 'log'
-	DEFAULT_FREQ = 60
-	DEFAULT_SEPARATOR = "\n"
+  DEFAULT_DIR = '.'
+  DEFAULT_PREFIX = 'log'
+  DEFAULT_FREQ = 60
+  DEFAULT_SEPARATOR = "\n"
 
-	attr_accessor :separator
-	attr_accessor :dir
-	attr_accessor :file
-	attr_accessor :current_ts
+  attr_accessor :separator
+  attr_accessor :dir
+  attr_accessor :file
+  attr_accessor :current_ts
 
-	def initialize(options={})
-		@dir = options[:dir] || DEFAULT_DIR
-		@file = nil
-		@current_ts = nil
-		@filename_prefix = options[:prefix] || DEFAULT_PREFIX
-		@rotate_freq = options[:rotate_every] || DEFAULT_FREQ #seconds
-		@binary_mode = options[:binary]
-		@separator = options[:separator] || DEFAULT_SEPARATOR
-	end
+  def initialize(options={})
+    @dir = options[:dir] || DEFAULT_DIR
+    @file = nil
+    @current_ts = nil
+    @filename_prefix = options[:prefix] || DEFAULT_PREFIX
+    @rotate_freq = options[:rotate_every] || DEFAULT_FREQ #seconds
+    @binary_mode = options[:binary]
+    @separator = options[:separator] || DEFAULT_SEPARATOR
+  end
 
-	# write something to the current log file.
-	def write(message)
-		log_file.write(message.to_s + @separator)
-	end
+  # write something to the current log file.
+  def write(message)
+    log_file.write(message.to_s + @separator)
+  end
 
-	# return a File object for the current log file.
-	def log_file
-		ts = this_period
+  # return a File object for the current log file.
+  def log_file
+    ts = this_period
 
-		# if we're in a new time period, start writing to new file.
-		if (! file) || (ts != current_ts)
-			rotate(ts)
-		end
+    # if we're in a new time period, start writing to new file.
+    if (! file) || (ts != current_ts)
+      rotate(ts)
+    end
 
-		file
-	end
+    file
+  end
 
-	# compute the current time period.
-	def this_period
-		t = Time.now.to_i
-		t - (t % @rotate_freq)
-	end
+  # compute the current time period.
+  def this_period
+    t = Time.now.to_i
+    t - (t % @rotate_freq)
+  end
 
-	# close current file handle and open a new one for a new logging period.
-	# ts defaults to the current time period.
-	def rotate(ts=nil)
-		ts ||= this_period
-		@file.close if @file
-		@file = File.open(filename(ts), "a#{'b' if @binary_mode}")
-		@current_ts = ts
-	end
+  # close current file handle and open a new one for a new logging period.
+  # ts defaults to the current time period.
+  def rotate(ts=nil)
+    ts ||= this_period
+    @file.close if @file
+    @file = File.open(filename(ts), "a#{'b' if @binary_mode}")
+    @current_ts = ts
+  end
 
-	# return a string filename for the logfile for the supplied timestamp.
-	# defaults to current time period.
-	def filename(ts=nil)
-		ts ||= this_period
-		File.join(@dir, "#{@filename_prefix}-#{Time.at(ts).utc.strftime('%Y%m%d-%H%M%SZ')}-#{@rotate_freq}.log")
-	end
+  # return a string filename for the logfile for the supplied timestamp.
+  # defaults to current time period.
+  def filename(ts=nil)
+    ts ||= this_period
+    File.join(@dir, "#{@filename_prefix}-#{Time.at(ts).utc.strftime('%Y%m%d-%H%M%SZ')}-#{@rotate_freq}.log")
+  end
 
-	# get all files which match our pattern which are not current.
-	# (safe for consumption. no longer being written to.)
-	def complete_files
-		current_file = filename
+  # get all files which match our pattern which are not current.
+  # (safe for consumption. no longer being written to.)
+  def complete_files
+    current_file = filename
 
-		Dir.glob(
-			File.join(@dir, "#{@filename_prefix}-*-#{@rotate_freq}.log")
-		).select do |name|
-			name != current_file
-		end
-	end
+    Dir.glob(
+      File.join(@dir, "#{@filename_prefix}-*-#{@rotate_freq}.log")
+    ).select do |name|
+      name != current_file
+    end
+  end
 
-	# enumerate over all the writes in a series, across all files.
-	def each
-		complete_files.sort.each do |file|
-			File.open(file,"r#{'b' if @binary_mode}").each_line(@separator) do |raw|
-				yield raw
-			end
-		end
-	end
+  # enumerate over all the writes in a series, across all files.
+  def each
+    complete_files.sort.each do |file|
+      File.open(file,"r#{'b' if @binary_mode}").each_line(@separator) do |raw|
+        yield raw
+      end
+    end
+  end
 
 end
