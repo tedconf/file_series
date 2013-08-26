@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "file_series"
-  s.version = "0.3.0"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alex Dean"]
-  s.date = "2012-10-26"
+  s.date = "2013-08-26"
   s.description = "Automatically start writing to a new file every X seconds without any locking or file moving/renaming."
   s.email = "alex@crackpot.org"
   s.extra_rdoc_files = [
