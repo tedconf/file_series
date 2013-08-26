@@ -37,6 +37,7 @@ class FileSeries
     @rotate_freq = options[:rotate_every] || DEFAULT_FREQ #seconds
     @binary_mode = options[:binary]
     @separator = options[:separator] || DEFAULT_SEPARATOR
+    @sync = options[:sync] || false
   end
 
   # write something to the current log file.
@@ -68,6 +69,7 @@ class FileSeries
     ts ||= this_period
     @file.close if @file
     @file = File.open(filename(ts), "a#{'b' if @binary_mode}")
+    @file.sync = @sync
     @current_ts = ts
   end
 

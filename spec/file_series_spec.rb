@@ -50,6 +50,25 @@ describe "FileSeries" do
     # Writing in binary mode works fine. How to reproduce that more simply for a test?
   end
 
+  describe "#new" do
+    it "should set sync to false by default" do
+      fs = FileSeries.new
+      fs.write 'blah'
+      fs.file.sync.should eq false
+    end
+
+    it "should allow control of sync behavior" do
+      fs = FileSeries.new(:sync => true)
+      fs.write 'blah'
+      fs.file.sync.should eq true
+
+      fs = FileSeries.new(:sync => false)
+      fs.write 'blah'
+      fs.file.sync.should eq false
+    end
+  end
+
+
   describe "#write" do
     it "should call log_file.write with message and separator" do
       fs = FileSeries.new(:separator=>'...')
