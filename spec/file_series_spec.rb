@@ -52,17 +52,17 @@ describe "FileSeries" do
 
   describe "#new" do
     it "should set sync to false by default" do
-      fs = FileSeries.new
+      fs = FileSeries.new(dir: test_dir)
       fs.write 'blah'
       fs.file.sync.should eq false
     end
 
     it "should allow control of sync behavior" do
-      fs = FileSeries.new(:sync => true)
+      fs = FileSeries.new(sync: true, dir: test_dir)
       fs.write 'blah'
       fs.file.sync.should eq true
 
-      fs = FileSeries.new(:sync => false)
+      fs = FileSeries.new(sync: false, dir: test_dir)
       fs.write 'blah'
       fs.file.sync.should eq false
     end
