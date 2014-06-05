@@ -113,6 +113,14 @@ describe "FileSeries" do
     end
   end
 
+  describe "#path" do
+    it "should act like #filename with no arguments" do
+      fs = FileSeries.new( :dir=>'/tmp', :prefix=>'test', :rotate_every=>3600)
+      fs.should_receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
+      fs.path.should == "/tmp/test-19700101-002000Z-3600.log"
+    end
+  end
+
   describe "#complete_files" do
     it "should find files in our series which are not in use" do
       list = [

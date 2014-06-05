@@ -80,6 +80,10 @@ class FileSeries
     File.join(@dir, "#{@filename_prefix}-#{Time.at(ts).utc.strftime('%Y%m%d-%H%M%SZ')}-#{@rotate_freq}.log")
   end
 
+  def path
+    filename
+  end
+
   # get all files which match our pattern which are not current.
   # (safe for consumption. no longer being written to.)
   def complete_files
