@@ -102,15 +102,36 @@ describe "FileSeries" do
 
   describe "#filename" do
     it "should accept a timestamp argument" do
-      fs = FileSeries.new( :dir=>'/tmp', :prefix=>'test', :rotate_every=>60)
+      fs = FileSeries.new(:dir=>'/tmp', :prefix=>'test', :rotate_every=>60)
       fs.filename(Time.parse('1970-01-01 00:20:34Z').to_i).should eq "/tmp/test-19700101-002034Z-60.log"
     end
 
     it "should use this_period when no timestamp is supplied" do
-      fs = FileSeries.new( :dir=>'/tmp', :prefix=>'test', :rotate_every=>3600)
+      fs = FileSeries.new(:dir=>'/tmp', :prefix=>'test', :rotate_every=>3600)
       fs.should_receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
       fs.filename.should == "/tmp/test-19700101-002000Z-3600.log"
     end
+  end
+
+  describe "parse_filename" do
+    it "should return a hash of information about a filename" do
+      data = FileSeries.parse_filename("/tmp/test-19700101-002000Z-3600.log")
+
+      data[:prefix].should eq 'test'
+      data[:start_time].should eq Time.parse('1970-01-01T00:20:00Z')
+      data[:duration].should eq 3600
+    end
+
+    it "should have an instance version also" do
+      filename = "/tmp/test-19700101-002000Z-3600.log"
+      data1 = FileSeries.parse_filename(filename)
+
+      fs = FileSeries.new(:dir=>'/tmp', :prefix=>'test', :rotate_every=>3600)
+      data2 = fs.parse_filename(filename)
+
+      data2.should eq data1
+    end
+
   end
 
   describe "#path" do

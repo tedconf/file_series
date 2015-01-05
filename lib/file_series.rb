@@ -75,9 +75,26 @@ class FileSeries
 
   # return a string filename for the logfile for the supplied timestamp.
   # defaults to current time period.
+  #
+  # changes to filename structure must be matched by changes to parse_filename
   def filename(ts=nil)
     ts ||= this_period
     File.join(@dir, "#{@filename_prefix}-#{Time.at(ts).utc.strftime('%Y%m%d-%H%M%SZ')}-#{@rotate_freq}.log")
+  end
+
+  # extract the parts of a filename
+  def self.parse_filename(filename)
+    base = File.basename(filename, '.log')
+    prefix, date, time, duration = base.split('-')
+    {
+      prefix: prefix,
+      start_time: Time.parse("#{date} #{time}").utc,
+      duration: duration.to_i
+    }
+  end
+
+  def parse_filename(filename)
+    self.class.parse_filename(filename)
   end
 
   def path
