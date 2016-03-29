@@ -12,3 +12,11 @@ group :development do
   gem "jeweler"
   gem "timecop", "0.3.5"
 end
+
+
+group :development do
+  gem 'brakeman', require: false
+  gem 'bundler-audit'
+  gem 'rubocop', require: false
+  gem 'rubocop-checkstyle_formatter'
+end
