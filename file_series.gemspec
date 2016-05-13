@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Alex Dean"]
-  s.date = "2015-01-05"
+  s.date = "2016-05-13"
   s.description = "Automatically start writing to a new file every X seconds without any locking or file moving/renaming."
   s.email = "alex@crackpot.org"
   s.extra_rdoc_files = [
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
     "VERSION",
     "file_series.gemspec",
     "lib/file_series.rb",
+    "script/jenkins.sh",
     "spec/file_series_spec.rb",
     "spec/spec_helper.rb"
   ]
@@ -44,24 +45,39 @@ Gem::Specification.new do |s|
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
+      s.add_development_dependency(%q<rspec>, ["~> 2.99"])
+      s.add_development_dependency(%q<ci_reporter_rspec>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.6.0"])
+      s.add_development_dependency(%q<bundler>, ["~> 1.6"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<timecop>, ["= 0.3.5"])
+      s.add_development_dependency(%q<brakeman>, [">= 0"])
+      s.add_development_dependency(%q<bundler-audit>, [">= 0"])
+      s.add_development_dependency(%q<rubocop>, [">= 0"])
+      s.add_development_dependency(%q<rubocop-checkstyle_formatter>, [">= 0"])
     else
-      s.add_dependency(%q<rspec>, ["~> 2.8.0"])
+      s.add_dependency(%q<rspec>, ["~> 2.99"])
+      s.add_dependency(%q<ci_reporter_rspec>, [">= 0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.6.0"])
+      s.add_dependency(%q<bundler>, ["~> 1.6"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<timecop>, ["= 0.3.5"])
+      s.add_dependency(%q<brakeman>, [">= 0"])
+      s.add_dependency(%q<bundler-audit>, [">= 0"])
+      s.add_dependency(%q<rubocop>, [">= 0"])
+      s.add_dependency(%q<rubocop-checkstyle_formatter>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rspec>, ["~> 2.8.0"])
+    s.add_dependency(%q<rspec>, ["~> 2.99"])
+    s.add_dependency(%q<ci_reporter_rspec>, [">= 0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.6.0"])
+    s.add_dependency(%q<bundler>, ["~> 1.6"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<timecop>, ["= 0.3.5"])
+    s.add_dependency(%q<brakeman>, [">= 0"])
+    s.add_dependency(%q<bundler-audit>, [">= 0"])
+    s.add_dependency(%q<rubocop>, [">= 0"])
+    s.add_dependency(%q<rubocop-checkstyle_formatter>, [">= 0"])
   end
 end
 
