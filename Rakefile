@@ -36,6 +36,11 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 
+if ENV['COVERAGE']
+  require 'ci/reporter/rake/rspec'
+  task spec: 'ci:setup:rspec'
+end
+
 task :default => :spec
 
 require 'rdoc/task'
