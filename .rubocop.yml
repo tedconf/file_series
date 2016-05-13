@@ -1,0 +1,5 @@
+inherit_from:
+  - https://raw.githubusercontent.com/tedconf/code-style-guides/master/linters/rubocop/rubocop.yml
+  - .rubocop_todo.yml
+  - .rubocop_local.yml
+
