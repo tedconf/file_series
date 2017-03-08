@@ -38,7 +38,7 @@ GEM
       nokogiri (>= 1.5.10)
       rake
       rdoc
-    json (1.8.1)
+    json (1.8.6)
     jwt (1.0.0)
     mini_portile2 (2.1.0)
     multi_json (1.10.1)
@@ -98,3 +98,6 @@ DEPENDENCIES
   rubocop
   rubocop-checkstyle_formatter
   timecop (= 0.3.5)
+
+BUNDLED WITH
+   1.13.6
