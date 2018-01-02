@@ -1,3 +1,3 @@
-module FileSeries
-  VERSION = '0.6.0'
-end
+# this is a gem used like a class.
+#
+# The version for this gem is in a class constant in lib/file_series.rb
