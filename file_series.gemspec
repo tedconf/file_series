@@ -43,6 +43,7 @@ Gem::Specification.new do |s|
   ]
 
 
+  s.add_dependency 'rake'
   s.add_dependency 'rspec', '~> 2.99'
   s.add_dependency 'ci_reporter_rspec', '>= 0'
   s.add_dependency 'rdoc', '~> 3.12'
