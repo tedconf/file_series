@@ -2,12 +2,12 @@
 $:.push File.expand_path('../lib', __FILE__)
 
 # Maintain your gem's version:
-#require 'file_series/version'
+require 'file_series/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name = "file_series"
-  s.version = "0.6.0"
+  s.version = FileSeries::VERSION
   s.authors = ["Alex Dean"]
   s.email = "alex@crackpot.org"
   s.homepage = "http://github.com/tedconf/file_series"

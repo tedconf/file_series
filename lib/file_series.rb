@@ -20,9 +20,6 @@ require 'time'
 
 # FileSeries rubocop loves comments
 class FileSeries
-  # this is the "Gem" version for this... class/gem
-  VERSION = '0.6.0'
-
   DEFAULT_DIR = '.'
   DEFAULT_PREFIX = 'log'
   DEFAULT_FREQ = 60
