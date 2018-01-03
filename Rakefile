@@ -26,7 +26,7 @@ if ENV['COVERAGE']
   task spec: 'ci:setup:rspec'
 end
 
-task :default => :spec
+task default: :spec
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|

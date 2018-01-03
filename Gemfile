@@ -11,10 +11,10 @@ gemspec
 # your gem to rubygems.org.
 
 group :development do
-  gem "rspec"
+  gem "bundler"
   gem "ci_reporter_rspec"
   gem "rdoc", "~> 3.12"
-  gem "bundler"
+  gem "rspec"
   gem "timecop", "0.3.5"
 end
 

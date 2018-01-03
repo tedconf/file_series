@@ -21,10 +21,10 @@ describe "FileSeries" do
   it "should write to a new file if we are in a new time period" do
 
     Timecop.freeze(Time.parse('1970-01-01 00:01:00Z'))
-    fs = FileSeries.new(:dir=>test_dir, :rotate_every => 10)
+    fs = FileSeries.new(dir: test_dir, rotate_every: 10)
     fs.write('foo')
 
-    name = File.join(test_dir,'log-19700101-000100Z-10.log')
+    name = File.join(test_dir, 'log-19700101-000100Z-10.log')
     File.exist?(name).should eq true
     fs.file.flush
     IO.read(name).should eq "foo\n"
@@ -32,7 +32,7 @@ describe "FileSeries" do
     Timecop.freeze(Time.parse('1970-01-01 00:01:15Z'))
     fs.write('foo again')
 
-    name = File.join(test_dir,'log-19700101-000110Z-10.log')
+    name = File.join(test_dir, 'log-19700101-000110Z-10.log')
     File.exist?(name).should eq true
     fs.file.flush
     IO.read(name).should == "foo again\n"
@@ -68,16 +68,15 @@ describe "FileSeries" do
     end
   end
 
-
   describe "#write" do
     it "should call log_file.write with message and separator" do
-      fs = FileSeries.new(:separator=>'...')
+      fs = FileSeries.new(separator: '...')
 
-      fs.should_receive(:log_file) {
+      fs.should_receive(:log_file) do
         d = double('log_file')
         d.should_receive(:write).with("foo...")
         d
-      }
+      end
 
       fs.write('foo')
     end
@@ -93,21 +92,21 @@ describe "FileSeries" do
 
   describe "#this_period" do
     it "should floor timestamp to the beginning of the current period" do
-      fs = FileSeries.new( :rotate_every=>20 )
+      fs = FileSeries.new(rotate_every: 20)
       now = Time.now.to_i
 
-      fs.this_period.should == (now - (now%20))
+      fs.this_period.should == (now - (now % 20))
     end
   end
 
   describe "#filename" do
     it "should accept a timestamp argument" do
-      fs = FileSeries.new(:dir=>'/tmp', :prefix=>'test', :rotate_every=>60)
+      fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 60)
       fs.filename(Time.parse('1970-01-01 00:20:34Z').to_i).should eq "/tmp/test-19700101-002034Z-60.log"
     end
 
     it "should use this_period when no timestamp is supplied" do
-      fs = FileSeries.new(:dir=>'/tmp', :prefix=>'test', :rotate_every=>3600)
+      fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 3600)
       fs.should_receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
       fs.filename.should == "/tmp/test-19700101-002000Z-3600.log"
     end
@@ -126,7 +125,7 @@ describe "FileSeries" do
       filename = "/tmp/test-19700101-002000Z-3600.log"
       data1 = FileSeries.parse_filename(filename)
 
-      fs = FileSeries.new(:dir=>'/tmp', :prefix=>'test', :rotate_every=>3600)
+      fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 3600)
       data2 = fs.parse_filename(filename)
 
       data2.should eq data1
@@ -136,7 +135,7 @@ describe "FileSeries" do
 
   describe "#path" do
     it "should act like #filename with no arguments" do
-      fs = FileSeries.new( :dir=>'/tmp', :prefix=>'test', :rotate_every=>3600)
+      fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 3600)
       fs.should_receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
       fs.path.should == "/tmp/test-19700101-002000Z-3600.log"
     end
@@ -151,10 +150,10 @@ describe "FileSeries" do
         '/tmp/prefix-19700101-000500Z-60.log',
       ]
 
-      Dir.should_receive(:glob).with('/tmp/prefix-*-60.log') {list}
+      Dir.should_receive(:glob).with('/tmp/prefix-*-60.log') { list }
 
       Timecop.freeze(Time.parse('1970-01-01 00:05:05Z')) do
-        fs = FileSeries.new(:dir=>'/tmp', :prefix=>'prefix', :rotate_every=>60)
+        fs = FileSeries.new(dir: '/tmp', prefix: 'prefix', rotate_every: 60)
         fs.complete_files.should == (list - ['/tmp/prefix-19700101-000500Z-60.log'])
       end
     end
@@ -162,7 +161,7 @@ describe "FileSeries" do
 
   describe "#each" do
     it "should enumerate all lines in all files in a series" do
-      fs = FileSeries.new(:dir=>test_dir, :rotate_every=>60, :prefix=>'events')
+      fs = FileSeries.new(dir: test_dir, rotate_every: 60, prefix: 'events')
 
       # write 3 files with consecutive integers.
       Timecop.freeze(Time.parse('1970-01-01 01:00:00')) do
@@ -187,16 +186,16 @@ describe "FileSeries" do
         out << line
       end
 
-      out.should == (0..29).to_a.map {|i| i.to_s+"\n" }
+      out.should == (0..29).to_a.map { |i| i.to_s + "\n" }
     end
 
     it "should enumerate all entries in a binary file series" do
       fs = FileSeries.new(
-        :binary=>true,
-        :separator=>'!~!~!',
-        :dir=>test_dir,
-        :prefix=>'bin',
-        :rotate_every=>60
+        binary: true,
+        separator: '!~!~!',
+        dir: test_dir,
+        prefix: 'bin',
+        rotate_every: 60
       )
 
       Timecop.freeze(Time.parse('1970-01-01 01:00:00')) do
@@ -222,9 +221,7 @@ describe "FileSeries" do
       end
 
       # note that we don't get the separator, and they're Fixnum not String
-      out.should == (0..29).to_a.map {|i| i }
-
+      out.should == (0..29).to_a.map { |i| i }
     end
   end
-
 end

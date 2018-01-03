@@ -18,6 +18,7 @@ require 'time'
 #   :separator - string. Appended to each write. Defaults to \n. Use something else in :binary mode.
 #
 
+# FileSeries rubocop loves comments
 class FileSeries
   # this is the "Gem" version for this... class/gem
   VERSION = '0.6.0'
@@ -32,7 +33,7 @@ class FileSeries
   attr_accessor :file
   attr_accessor :current_ts
 
-  def initialize(options={})
+  def initialize(options = {})
     @dir = options[:dir] || DEFAULT_DIR
     @file = nil
     @current_ts = nil
@@ -68,7 +69,7 @@ class FileSeries
 
   # close current file handle and open a new one for a new logging period.
   # ts defaults to the current time period.
-  def rotate(ts=nil)
+  def rotate(ts = nil)
     ts ||= this_period
     @file.close if @file
     @file = File.open(filename(ts), "a#{'b' if @binary_mode}")
@@ -80,7 +81,7 @@ class FileSeries
   # defaults to current time period.
   #
   # changes to filename structure must be matched by changes to parse_filename
-  def filename(ts=nil)
+  def filename(ts = nil)
     ts ||= this_period
     File.join(@dir, "#{@filename_prefix}-#{Time.at(ts).utc.strftime('%Y%m%d-%H%M%SZ')}-#{@rotate_freq}.log")
   end
@@ -119,10 +120,9 @@ class FileSeries
   # enumerate over all the writes in a series, across all files.
   def each
     complete_files.sort.each do |file|
-      File.open(file,"r#{'b' if @binary_mode}").each_line(@separator) do |raw|
+      File.open(file, "r#{'b' if @binary_mode}").each_line(@separator) do |raw|
         yield raw
       end
     end
   end
-
 end

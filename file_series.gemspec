@@ -42,7 +42,6 @@ Gem::Specification.new do |s|
     "spec/spec_helper.rb"
   ]
 
-
   s.add_dependency 'rake'
   s.add_dependency 'rspec'
   s.add_dependency 'ci_reporter_rspec', '>= 0'
