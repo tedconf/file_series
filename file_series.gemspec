@@ -19,36 +19,6 @@ Gem::Specification.new do |s|
   s.rubygems_version = "2.2.2"
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
-  s.extra_rdoc_files = [
-    "LICENSE.txt",
-    "README.rdoc"
-  ]
-  s.files = [
-    ".autotest",
-    ".document",
-    ".rspec",
-    ".ruby-gemset",
-    ".ruby-version",
-    "Gemfile",
-    "Gemfile.lock",
-    "LICENSE.txt",
-    "README.rdoc",
-    "Rakefile",
-    "VERSION",
-    "file_series.gemspec",
-    "lib/file_series.rb",
-    "script/jenkins.sh",
-    "spec/file_series_spec.rb",
-    "spec/spec_helper.rb"
-  ]
-
-  s.add_dependency 'rake'
-  s.add_dependency 'rspec'
-  s.add_dependency 'ci_reporter_rspec', '>= 0'
-  s.add_dependency 'rdoc', '~> 3.12'
-  s.add_dependency 'timecop', '= 0.3.5'
-  s.add_dependency 'brakeman', '>= 0'
-  s.add_dependency 'bundler-audit', '>= 0'
-  s.add_dependency 'rubocop', '>= 0'
-  s.add_dependency 'rubocop-checkstyle_formatter', '>= 0'
+  s.files = Dir['lib/**/*', 'LICENSE.txt', 'Rakefile', 'README.rdoc']
+  s.test_files = Dir['spec/**/*']
 end

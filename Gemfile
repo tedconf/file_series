@@ -11,14 +11,12 @@ gemspec
 # your gem to rubygems.org.
 
 group :development do
+  gem "rake"
   gem "bundler"
   gem "ci_reporter_rspec"
   gem "rdoc", "~> 3.12"
   gem "rspec"
   gem "timecop", "0.3.5"
-end
-
-group :development do
   gem 'brakeman', require: false
   gem 'bundler-audit'
   gem 'rubocop', require: false
