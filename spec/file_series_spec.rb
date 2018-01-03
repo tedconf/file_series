@@ -25,17 +25,17 @@ describe "FileSeries" do
     fs.write('foo')
 
     name = File.join(test_dir, 'log-19700101-000100Z-10.log')
-    File.exist?(name).should eq true
+    expect(File.exist?(name)).to eq true
     fs.file.flush
-    IO.read(name).should eq "foo\n"
+    expect(IO.read(name)).to eq "foo\n"
 
     Timecop.freeze(Time.parse('1970-01-01 00:01:15Z'))
     fs.write('foo again')
 
     name = File.join(test_dir, 'log-19700101-000110Z-10.log')
-    File.exist?(name).should eq true
+    expect(File.exist?(name)).to eq true
     fs.file.flush
-    IO.read(name).should == "foo again\n"
+    expect(IO.read(name)).to eq("foo again\n")
 
   end
 
@@ -54,17 +54,17 @@ describe "FileSeries" do
     it "should set sync to false by default" do
       fs = FileSeries.new(dir: test_dir)
       fs.write 'blah'
-      fs.file.sync.should eq false
+      expect(fs.file.sync).to eq false
     end
 
     it "should allow control of sync behavior" do
       fs = FileSeries.new(sync: true, dir: test_dir)
       fs.write 'blah'
-      fs.file.sync.should eq true
+      expect(fs.file.sync).to eq true
 
       fs = FileSeries.new(sync: false, dir: test_dir)
       fs.write 'blah'
-      fs.file.sync.should eq false
+      expect(fs.file.sync).to eq false
     end
   end
 
@@ -72,9 +72,9 @@ describe "FileSeries" do
     it "should call log_file.write with message and separator" do
       fs = FileSeries.new(separator: '...')
 
-      fs.should_receive(:log_file) do
+      expect(fs).to receive(:log_file) do
         d = double('log_file')
-        d.should_receive(:write).with("foo...")
+        expect(d).to receive(:write).with("foo...")
         d
       end
 
@@ -85,7 +85,7 @@ describe "FileSeries" do
   describe "#log_file" do
     it "should call rotate if no file is open" do
       fs = FileSeries.new
-      fs.should_receive(:rotate)
+      expect(fs).to receive(:rotate)
       fs.log_file
     end
   end
@@ -95,20 +95,20 @@ describe "FileSeries" do
       fs = FileSeries.new(rotate_every: 20)
       now = Time.now.to_i
 
-      fs.this_period.should == (now - (now % 20))
+      expect(fs.this_period).to eq(now - (now % 20))
     end
   end
 
   describe "#filename" do
     it "should accept a timestamp argument" do
       fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 60)
-      fs.filename(Time.parse('1970-01-01 00:20:34Z').to_i).should eq "/tmp/test-19700101-002034Z-60.log"
+      expect(fs.filename(Time.parse('1970-01-01 00:20:34Z').to_i)).to eq "/tmp/test-19700101-002034Z-60.log"
     end
 
     it "should use this_period when no timestamp is supplied" do
       fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 3600)
-      fs.should_receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
-      fs.filename.should == "/tmp/test-19700101-002000Z-3600.log"
+      expect(fs).to receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
+      expect(fs.filename).to eq("/tmp/test-19700101-002000Z-3600.log")
     end
   end
 
@@ -116,9 +116,9 @@ describe "FileSeries" do
     it "should return a hash of information about a filename" do
       data = FileSeries.parse_filename("/tmp/test-19700101-002000Z-3600.log")
 
-      data[:prefix].should eq 'test'
-      data[:start_time].should eq Time.parse('1970-01-01T00:20:00Z')
-      data[:duration].should eq 3600
+      expect(data[:prefix]).to eq 'test'
+      expect(data[:start_time]).to eq Time.parse('1970-01-01T00:20:00Z')
+      expect(data[:duration]).to eq 3600
     end
 
     it "should have an instance version also" do
@@ -128,7 +128,7 @@ describe "FileSeries" do
       fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 3600)
       data2 = fs.parse_filename(filename)
 
-      data2.should eq data1
+      expect(data2).to eq data1
     end
 
   end
@@ -136,8 +136,8 @@ describe "FileSeries" do
   describe "#path" do
     it "should act like #filename with no arguments" do
       fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 3600)
-      fs.should_receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
-      fs.path.should == "/tmp/test-19700101-002000Z-3600.log"
+      expect(fs).to receive(:this_period) { Time.parse('1970-01-01 00:20:00Z').to_i }
+      expect(fs.path).to eq("/tmp/test-19700101-002000Z-3600.log")
     end
   end
 
@@ -150,11 +150,11 @@ describe "FileSeries" do
         '/tmp/prefix-19700101-000500Z-60.log',
       ]
 
-      Dir.should_receive(:glob).with('/tmp/prefix-*-60.log') { list }
+      expect(Dir).to receive(:glob).with('/tmp/prefix-*-60.log').and_return(list)
 
       Timecop.freeze(Time.parse('1970-01-01 00:05:05Z')) do
         fs = FileSeries.new(dir: '/tmp', prefix: 'prefix', rotate_every: 60)
-        fs.complete_files.should == (list - ['/tmp/prefix-19700101-000500Z-60.log'])
+        expect(fs.complete_files).to eq(list - ['/tmp/prefix-19700101-000500Z-60.log'])
       end
     end
   end
@@ -186,7 +186,7 @@ describe "FileSeries" do
         out << line
       end
 
-      out.should == (0..29).to_a.map { |i| i.to_s + "\n" }
+      expect(out).to eq((0..29).to_a.map { |i| i.to_s + "\n" })
     end
 
     it "should enumerate all entries in a binary file series" do
@@ -221,7 +221,7 @@ describe "FileSeries" do
       end
 
       # note that we don't get the separator, and they're Fixnum not String
-      out.should == (0..29).to_a.map { |i| i }
+      expect(out).to eq((0..29).to_a.map { |i| i })
     end
   end
 end
