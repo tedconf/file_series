@@ -102,7 +102,8 @@ describe "FileSeries" do
   describe "#filename" do
     it "should accept a timestamp argument" do
       fs = FileSeries.new(dir: '/tmp', prefix: 'test', rotate_every: 60)
-      expect(fs.filename(Time.parse('1970-01-01 00:20:34Z').to_i)).to eq "/tmp/test-19700101-002034Z-60.log"
+      expect(fs.filename(Time.parse('1970-01-01 00:20:34Z').to_i))
+        .to eq "/tmp/test-19700101-002034Z-60.log"
     end
 
     it "should use this_period when no timestamp is supplied" do

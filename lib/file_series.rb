@@ -80,7 +80,9 @@ class FileSeries
   # changes to filename structure must be matched by changes to parse_filename
   def filename(ts = nil)
     ts ||= this_period
-    File.join(@dir, "#{@filename_prefix}-#{Time.at(ts).utc.strftime('%Y%m%d-%H%M%SZ')}-#{@rotate_freq}.log")
+    File.join @dir, "#{@filename_prefix}-" \
+                    "#{Time.at(ts).utc.strftime('%Y%m%d-%H%M%SZ')}-" \
+                    "#{@rotate_freq}.log"
   end
 
   # extract the parts of a filename
