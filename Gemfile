@@ -12,13 +12,13 @@ gemspec
 
 group :development do
   gem 'brakeman', require: false
-  gem "bundler"
+  gem 'bundler'
   gem 'bundler-audit'
-  gem "ci_reporter_rspec"
-  gem "rake"
-  gem "rdoc", "~> 3.12"
-  gem "rspec"
+  gem 'ci_reporter_rspec'
+  gem 'rake'
+  gem 'rdoc', '~> 3.12'
+  gem 'rspec'
   gem 'rubocop', require: false
   gem 'rubocop-checkstyle_formatter'
-  gem "timecop", "0.3.5"
+  gem 'timecop', '0.3.5'
 end
