@@ -50,4 +50,3 @@ pkg
 #*.rbc
 
 .rubocop-http*
-Gemfile.lock
