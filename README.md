@@ -1,4 +1,5 @@
 # file_series
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=tedconf/file_series&identifier=5099557)](https://dependabot.com)
 
 FileSeries is a Ruby library for writing to a group of files.
 
