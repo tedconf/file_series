@@ -16,7 +16,7 @@ group :development do
   gem 'bundler-audit'
   gem 'ci_reporter_rspec'
   gem 'rake'
-  gem 'rdoc', '~> 3.12'
+  gem 'rdoc'
   gem 'rspec'
   gem 'rubocop', require: false
   gem 'rubocop-checkstyle_formatter'
